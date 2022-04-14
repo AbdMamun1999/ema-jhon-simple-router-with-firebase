@@ -1,12 +1,19 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import auth from '../../firebase.init';
 import './SignUP.css'
+import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
+
 
 const SignUp = () => {
     const [email,setEmail] = useState('')
     const [password,setPassword] = useState('')
     const [confirmPassword,setConfirmPassword] = useState('')
     const [error,setError] = useState('')
+    const navigate = useNavigate()
+
+
+    const [createUserWithEmailAndPassword,user] = useCreateUserWithEmailAndPassword(auth)
 
     const handleEmailBlur = event =>{
         setEmail(event.target.value)
@@ -21,13 +28,20 @@ const SignUp = () => {
         setConfirmPassword(event.target.value)
     }
 
+    if(user){
+        navigate('/')
+    }
+
     const handleSubmit = event =>{
         event.preventDefault()
         if(password !== confirmPassword){
             setError('Password didn\'t match')
             return;
         }
+        createUserWithEmailAndPassword(email,password)
     }
+
+    console.log(user)
 
     return (
         <div className='form-container'>
